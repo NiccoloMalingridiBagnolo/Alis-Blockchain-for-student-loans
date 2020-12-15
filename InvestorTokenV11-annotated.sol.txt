@@ -1,0 +1,120 @@
+pragma solidity >=0.6.0 <0.8.0;
+import './StuLoanV4.sol';
+
+//erz token zeppelin, can be held in wallets //mutex? investigate open zeppelin decorators //non rentrancy tool
+contract InvestorToken{
+    constructor() {
+        owner = msg.sender;
+        for_sale = false;
+        ask_price = 0;
+    }
+    
+        address payable owner;
+        address payable stu_loan_address;
+        bool for_sale;
+        uint ask_price;
+
+    function stuLoanAddress(address payable _address) public returns (address) {
+        stu_loan_address = _address;
+        return stu_loan_address;
+    }
+    
+    //all the bolow functions interact with the StuLoan contract
+    function createInvestor(string memory name) public {
+        require(msg.sender == owner);
+        StudentLoan c = StudentLoan(stu_loan_address);
+        c.createInvestor(name);
+    }
+    
+    function grantLoan(uint appId, uint amount) public {
+        require(msg.sender == owner);
+        StudentLoan c = StudentLoan(stu_loan_address);
+        c.grantLoan(appId, amount);
+    }
+    
+    function viewBalanceInLoan() view public returns (uint){
+        require(msg.sender == owner);
+        StudentLoan c = StudentLoan(stu_loan_address);
+        return c.viewBalance();
+    }
+    
+    function depositToLoan() payable external {
+        require(msg.sender == owner);
+        stu_loan_address.call{gas: 50000, value: msg.value}('');
+    }
+    
+    
+    function withdrawFromLoan(uint amount) public {
+        require(msg.sender == owner);
+        StudentLoan c = StudentLoan(stu_loan_address);
+        c.withdraw(amount);
+    }
+    
+
+    function getLoanData() view public returns (uint[] memory , address, address){
+        require(msg.sender == owner);
+        StudentLoan c = StudentLoan(stu_loan_address);
+        uint index = c.invFindLoans();
+        return c.getLoanData(index);
+        
+    }
+    
+    function getNumApplications() view public returns (uint) { 
+        StudentLoan c = StudentLoan(stu_loan_address);
+        return c.getNumApplications();
+    }
+    
+    function getApplicationData(uint index)  view public returns (uint, uint, uint, string memory, address) { 
+        StudentLoan c = StudentLoan(stu_loan_address);
+        return c.getApplicationData(index);
+    }
+    
+
+    //these are util functions for the functioning of the contract
+    //put money in, take money out etc
+    function getTime() view public returns (uint) {return block.timestamp;}
+    
+    //still sketchy
+    //took away require(msg.sender == owner) here as we require that msg.sender has money in account
+    //this is to prevent redundancy attacks in ownership transfer so we can change the owner before withdraw
+    function withdraw(uint amount) public {
+        withdrawFromLoan(viewBalanceInLoan());
+        require(amount <= address(this).balance);
+        owner.transfer(amount);
+    }
+    
+     function viewBalance() view public returns (uint){
+        return address(this).balance;
+    }
+    
+    //Buy/sell
+
+    function sell(uint askprice) public {
+        require(msg.sender == owner);
+        withdrawFromLoan(viewBalanceInLoan());
+        for_sale = true;
+        ask_price = askprice;
+    }
+    
+    function viewAskPrice() public view returns (uint) {
+        return ask_price;
+        
+    }
+    
+    function buy() payable public {
+        require(for_sale == true);
+        require(msg.value == ask_price);
+        address(this).call{value : msg.value, gas : 50000}('');
+        withdraw(viewBalance());
+        owner = msg.sender;
+        for_sale = false;
+    }
+    
+    function removeSale() public {
+        require(msg.sender == owner);
+        for_sale = false;
+    }
+    
+    fallback  () external payable {
+    }
+}
