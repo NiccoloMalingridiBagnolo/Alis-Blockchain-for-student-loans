@@ -1,0 +1,49 @@
+pragma solidity ^0.4.17;
+
+contract IsaDraftX{
+
+//Docstring: by calling the sign signature you sign the contract someehitng legally enforcable....
+	
+	signature bytes public
+	unint256 public amount
+	adress owner  //student is owner?
+	paper_signed bool public
+	signed bool public
+		
+	constructor() public {
+		owner = msg.sender;
+		paper_signed = False;
+		signed = False;
+		}
+	
+	function isPaperSigned(bool paper_signed) public {
+		require(msg.sender == owner);
+		paper_signed = True;
+		}
+	
+	function inputAmount(uint265 _amount) public payable {
+		require(_amount > 0);
+		require(amount <= investment_cap);
+		amount = _amount;
+		}
+
+	funtion returnAmount() public {
+		require(paper_signed == True);
+		require(signed == True);
+		return amount;
+		}
+
+	function signInvestor(bytes signer_pub_key) private {
+		signature = keccak256(signer_pub_key);
+    		return signature;
+		}
+
+	function isDataSigned(bytes public_key) public view returns (bool) {
+		//public key is the p-key of the person we want to know if they have signed the contract
+		require(msg.sender == owner);
+		signed = (sha256(public_key) == signature);
+		return signed
+		}
+
+			
+}
