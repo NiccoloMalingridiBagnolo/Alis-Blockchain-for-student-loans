@@ -9,7 +9,7 @@ In this Repo you will find three main components which constitute the prototype 
 The first Solidy contract is the InvestorToken. This contract only works in tandem with the second contract, the StudentLoan: a function is provided within the InvestorToken contract which allows one to specify the address of the StudentLoan contract and subsequently interact with it. This is a tradable contract and many instances are envisioned to be in circulation
 
 ## StudentLoans
-The second Solidy contract is the StudenLoan. This contact will only have one circulating instance, and is responsabile for managing all loan applications, loans, students, and InvestorTokens.
+The second Solidy contract is the StudentLoan. This contact will only have one circulating instance, and is responsabile for managing all loan applications, loans, students, and InvestorTokens.
 
 # ALIS JUPYTER NOTEBOOK
 
