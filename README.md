@@ -9,12 +9,12 @@ In this Repo you will find three main components which constitute the prototype 
 The first Solidy contract is the InvestorToken. This contract only works in tandem with the second contract, the StudentLoan: a function is provided within the InvestorToken contract which allows one to specify the address of the StudentLoan contract and subsequently interact with it. This is a tradable contract and many instances are envisioned to be in circulation
 
 ## StudentLoans
-The second Solidy contract is the StudentLoan. This contact will only have one circulating instance, and is responsabile for managing all loan applications, loans, students, and InvestorTokens.
+The second Solidy contract is the StudentLoans. This contract will only have one circulating instance, and is responsabile for managing all loan applications, loans, students, and InvestorTokens.
 
 # ALIS JUPYTER NOTEBOOK
 
 ## Machine Learning Analysis
-In the first section of the Jupyter notebook one can see the machine learning analysis aimed at correctly predicting the defualt rates for each student. We approach this problem by predicting average deafault probability of sutdents in a given college with respect to a set of both student and college characteristics. We try out five different models: a Logistic regression, a Gradient Boosting regression, a K-Nearest Neighbours Regression, a Support Vector Machine and a Random Forest Regression. Finally we settle on Random Forest Regression as it provides us with the most accurate result. Mean absolute error is reported for all five different methods, while model optimization and prediction standard errors are done for the chosen Random Forest Model.
+In the first section of the Jupyter notebook one can see the machine learning analysis aimed at correctly predicting the defualt rates for each student. We approach this problem by predicting average deafault probability of sutdents in a given college with respect to a set of both student and college characteristics. We try out five different models: a Logistic regression, a Gradient Boosting regression, a K-Nearest Neighbours Regression, a Support Vector Machine and a Random Forest Regression. Finally we settle on Random Forest Regression as it provides us with the most accurate results. Mean absolute errors are reported for all five different methods, while model optimization and prediction of standard errors are done for the chosen Random Forest Model only.
 
 ## Pricing
 We use the pricing formula from Options, Futures, and Other Derivatives by John C. Hull "Estimating default probabilities from bond yield spreads" Chapter 24.4 and define a function to convert the estimated default rate, which is predicted by the Random Forest Regression to a corresponding interest rate. Default rates are then segmented into ten quantiles, corresponding to ten credist risk ratings.
