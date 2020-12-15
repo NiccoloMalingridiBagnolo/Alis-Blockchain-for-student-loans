@@ -1,0 +1,70 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2576
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww15620\viewh11920\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs28 \cf0 pragma solidity >=0.6.0;\
+\
+// SPDX-License-Identifier: UNLICENSED\
+\
+contract StudentDebtContract \{\
+    string public name;\
+    string public role;\
+    string public university;\
+    uint256 public annualDebtAmount;\
+    \
+    uint256 public predictedIncome;\
+    uint public shareOfIncome;\
+    struct Rational \{\
+        uint256 numerator;\
+        uint256 denominator;\
+    \}\
+    Rational public interestRate;\
+    uint public years_to_repay;\
+    \
+    uint256 public annualRepaymentWithInterest;\
+    uint256 public monthlyPayment;\
+    uint256 public remainingBalance;\
+\
+    function SetName(string memory _name) public \{\
+        name = _name;\
+    \}\
+    \
+    function SetAge(uint _age) public \{\
+        age = _age;\
+    \}\
+    \
+    function SetRole(string memory _role) public \{\
+        require(_role == \'93Student\'94 || _role == \'93Investor\'94);\
+        role = _role;\
+    \}\
+    \
+    function SetUniversity(string memory _university) public \{\
+        require(role == "Student", "Only student can give the name of the university.");\
+        university = _university;\
+    \}\
+    \
+    function SetAnnualDebtAmount(uint256 memory _annualDebtAmount) public \{\
+        require(role == "Student", "Only student can set the total annual debt amount.");\
+        annualDebtAmount = _annualDebtAmount;\
+    \}\
+    \
+    function makepayment() public \{\
+        require(role == "Investor", "Only investor can transfer the debt amount.");\
+        ....\
+    \}\
+    \
+    function calculateMonthlyPayment(uint256 annualDebtAmount, uint256 predictedIncome, uint shareOfIncome, Rational interestRate, uint years_to_repay) internal view returns (uint256 monthlyPayment) \{\
+        annualRepaymentWithInterest = (annualDebtAmount/years_to_repay)*(1+interestRate);\
+        monthlyPayment = annualRepaymentWithInterest/12 ;\
+        return (monthlyPayment);\
+    \}\
+    \
+    function monthlyrepayment(uint256 monthlyPayment) public \{\
+        require(role == "Student", "Only student can pay back the investor each month.");\
+        .....\
+    \}\
+\
+\}}

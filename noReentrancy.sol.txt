@@ -1,0 +1,171 @@
+pragma solidity ^0.4.0;
+
+import './StuLoanV5.sol';
+    
+//erz token zeppelin, can be held in wallets //mutex? investigate open zeppelin decorators //non rentrancy tool
+contract InvestorToken {
+        mapping (address => uint) balances;
+        address owner;
+        address stu_loan_address;
+        bool for_sale;
+        uint ask_price;
+        uint bid_price;
+        uint numBids;
+        
+    constructor() public {
+        owner = msg.sender;
+        for_sale = false;
+        ask_price = 0;
+        bid_price = 0;
+        numBids = 0;
+    }
+    
+    struct Bid{
+        uint bid_price;
+        address buyer;
+    }
+    
+    mapping (uint => Bid) public bids;
+    
+    function stuLoanAddress(address _address) public returns (address) {
+        stu_loan_address = _address;
+        return stu_loan_address;
+    }
+    
+    //all the bolow functions interact with the StuLoan contract
+    function createInvestor(string name) public {
+        require(msg.sender == owner);
+        StudentLoan c = StudentLoan(stu_loan_address);
+        c.createInvestor(name);
+    }
+    
+    function grantLoan(uint appId) public {
+        require(msg.sender == owner);
+        StudentLoan c = StudentLoan(stu_loan_address);
+        c.grantLoan(appId);
+    }
+    
+    function viewBalanceInLoan() view public returns (uint){
+        require(msg.sender == owner);
+        StudentLoan c = StudentLoan(stu_loan_address);
+        return c.viewBalance();
+    }
+    
+    function depositToLoan(uint amount) payable public {
+        require(msg.sender == owner);
+        balances[msg.sender] -= amount;
+        stu_loan_address.transfer(amount);
+    }
+    
+    
+    function withdrawFromLoan(uint amount) public {
+        require(msg.sender == owner);
+        StudentLoan c = StudentLoan(stu_loan_address);
+        c.withdraw(amount);
+    }
+    
+    function transferWithinLoan(address taker, uint amount) public {
+        require(msg.sender == owner);
+        StudentLoan c = StudentLoan(stu_loan_address);
+        c.t_funds(taker, amount);
+    }
+        
+    function getLoanData(uint index) view public returns (uint[], address, address){
+        require(msg.sender == owner);
+        StudentLoan c = StudentLoan(stu_loan_address);
+        return c.getLoanData(index);
+        
+    }
+    
+    function getNumApplications() view public returns (uint) { 
+        StudentLoan c = StudentLoan(stu_loan_address);
+        return c.getNumApplications();
+    }
+    
+    function getApplicationData(uint index)  view public returns (uint, uint, uint, string, address) { 
+        StudentLoan c = StudentLoan(stu_loan_address);
+        return c.getApplicationData(index);
+    }
+    
+    function getNumLoans() view public returns (uint) {
+        StudentLoan c = StudentLoan(stu_loan_address);
+        return c.getNumLoans();
+    }
+    
+    //these are util functions for the functioning of the contract
+    //put money in, take money out etc
+    function getTime() view public returns (uint) {return now;}
+    
+
+    bool locked;
+    modifier noReentrancy() {
+        require(
+            !locked,
+            "Reentrant call."
+        );
+        locked = true;
+        _;
+        locked = false;
+    }
+    
+    //still sketchy
+    //took away require(msg.sender == owner) here as we require that msg.sender has money in account
+    //this is to prevent redundancy attacks in ownership transfer so we can change the owner before withdraw
+    function withdraw(uint amount) noReentrancy public {
+        //the two requires are redundant i think but idk which is better
+        require(amount <= address(this).balance);
+        require(amount<= balances[msg.sender]);
+        balances[msg.sender] -= amount;
+        msg.sender.transfer(amount);
+    }
+    
+     function viewBalance() view public returns (uint){
+        require(msg.sender == owner); //privacy?
+        return balances[msg.sender];
+    }
+    
+    function deposit() payable public {
+        balances[msg.sender] += msg.value;
+    }
+    
+    //Buy/sell
+
+    function sell(uint askprice) private {
+        require(msg.sender == owner);
+        for_sale = true;
+        ask_price = askprice;
+    }
+    
+    function bbid(uint bidprice) payable public {
+        require(for_sale == true);
+        Bid memory bid;
+        bid.bid_price = bidprice;
+        bid.buyer = msg.sender;
+        balances[msg.sender] += bidprice;
+        numBids += 1;
+        
+    }
+    
+    
+    //pyhton loop for bid in getnumbid() getbidData(bid) and store
+  function getNumBids() view public returns (uint) { return numBids;}
+  
+  function getBidData(uint index) view public returns (uint, address, uint){
+      return (index, bids[index].buyer, bids[index].bid_price);
+      
+  }
+  
+  //we know the bid asress from previous funtions (automated in python) //owner selects bid from py app and then call this fucntion
+  
+  
+    function ownershipTransfer(address buyer) private {
+        require(msg.sender == owner); //current owner
+        balances[buyer] -= bid_price;
+        balances[msg.sender] += bid_price;
+        owner = buyer;   //new owner
+        withdraw(viewBalance());  //empty contract account
+        
+    }
+    
+
+}
