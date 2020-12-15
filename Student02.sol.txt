@@ -1,0 +1,79 @@
+pragma solidity >=0.4.22 <0.7.0;
+
+contract StudentContract{
+    unit public isa;
+    unit public risk;
+    
+    constructor() public{
+        owner = msg.sender;
+    }
+    
+ 
+    
+    function LoadIsa() public{
+        isa = msg.value;
+    }
+    
+    function StoreRisk(int256 _value) public{
+        risk = _value;
+    }
+    
+    function setOwner(address _address) public{
+        owner = _address;  //set student.address as the owner
+    }
+    
+    ///sign signature
+    function SignStudent(address _address) public{
+        require(_address == owner); //verify student.address is current owner
+        var account = web3.eth.accounts[0];
+        var sha3Msg = web3.sha3('abc'); //'abc' represents the private key of student
+        var signedData = web3.eth.sign(account, sha3Msg);
+
+        console.log("account:" + account);
+        console.log("sha3(message):" + sha3Msg);
+        console.log("Signed data:" + signedData);
+    }
+    
+     ///verfication of signature
+    function verifyByHashAndSig(bytes32 hash, bytes signature) external returns (address){
+        bytes memory signedString = signature;
+    
+        bytes32  r = bytesToBytes32(slice(signedString, 0, 32));
+        bytes32  s = bytesToBytes32(slice(signedString, 32, 32));
+        byte  v1 = slice(signedString, 64, 1)[0];
+        uint8 v = uint8(v1) + 27;
+        return ecrecoverDirect(hash, r, s, v);
+    }
+    
+    
+    function slice(bytes memory data, uint start, uint len) external returns (bytes){
+        bytes memory b = new bytes(len);
+        for(uint i = 0; i < len; i++){
+          b[i] = data[i + start];}
+        return b;
+    }
+
+  
+    function bytesToBytes32(bytes memory source) external returns (bytes32 result){
+        assembly {
+            result := mload(add(source, 32))
+        }
+    }
+
+  
+    function ecrecoverDirect(bytes32 hash, bytes32 r, bytes32 s, uint8 v) returns (address addr){
+         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+         hash = sha3(prefix, hash);
+    
+         addr = ecrecover(hash, v, r, s);
+    }
+    ///verification part ends
+    
+    
+    function destroyContract() public{
+            owner = msg.sender;//should set the contructor as owner again...
+            require(msg.sender == owner); 
+            selfdestruct(msg.sender);
+    }
+    
+}
