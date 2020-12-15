@@ -72,7 +72,7 @@ contract StudentLoan {
         investor.name = name;
         investor.investor_public_key = msg.sender;
         investor.EXISTS = true;
-        require (students[msg.sender].EXISTS != true); // A tudent cannot be an investor
+        require (students[msg.sender].EXISTS != true); // A student cannot be an investor
         investors[msg.sender] = investor;
         hasOngoingInvestment[msg.sender] = false;
         balances[msg.sender] = 0; // Initial balance
@@ -108,8 +108,8 @@ contract StudentLoan {
     }
     
     
-    //Next, if requirements are met we need to turn the application into an ongoing loan. 
-    //This function allows the creation of an investor object and it fills in the objects attributes, referring to the corresponding  application object.
+    //Next, if requirements are met, we need to turn the application into an ongoing loan. 
+    //This function allows the creation of an investor object and it fills in the objects attributes, referring to the corresponding application object.
     function grantLoan(uint appId, uint amount) public {
         
         require(balances[msg.sender] >= amount); //Check sufficient balance
@@ -169,7 +169,7 @@ contract StudentLoan {
         
     }
     
-    //This function allows an ivestor to find the loan id of the InvestorToken they own
+    //This function allows an investor to find the loan id of the InvestorToken they own
     function invFindLoans() public view returns (uint)  {
         uint id = 0;
         for(uint i=0; i<=numLoans; i++)
@@ -185,7 +185,7 @@ contract StudentLoan {
     }
        
     //This function allows a student to repay their loan. Repayment here is handled within the StuLoan balances, and credit is shifted around between balances.
-    //The function only decreases the principal_amount of the loan once onterest for the period has been paid.
+    //The function only decreases the principal_amount of the loan once interest for the period has been paid.
     function repayLoan(uint amount, uint estimatedInterest, uint timeSinceLastPayment, uint id_) public {
         //First check if the payer has enough money
         require(balances[msg.sender] >= amount);
@@ -234,7 +234,7 @@ contract StudentLoan {
     }
     
     
-    //The functions allow functionality to the contract. Users can deposit, withdraw, or view their balance.
+    //The functions allow functionality to the contract. Users can deposit, withdraw, or view their balances.
     function viewBalance() view public returns (uint){
         return balances[msg.sender];
     }
