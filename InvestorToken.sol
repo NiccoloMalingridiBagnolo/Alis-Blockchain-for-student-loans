@@ -95,7 +95,7 @@ contract InvestorToken{
     }
     
     //We now define the function which allow the contract to be traded. These functions work by allowing a tranfer of ownership
-    //in esxhange for an amount of Wei specified bby the owner/seller. When the owner/seller decides to sell this contract any 
+    //in exchange for an amount of Wei specified by the owner/seller. When the owner/seller decides to sell this contract any 
     //outstanding balance in the StuLoan contract is withdrawn.
 
     function sell(uint askprice) public {
