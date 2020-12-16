@@ -54,3 +54,4 @@ HIGHDEG: Highest degree awarded (Non-degree-granting, Certificate degree, Associ
 
 # Finally
 Specific analysis details are provided as comments and markdowns in the notebook, as well as details concerning the workings of the most important functions.
+For a more thourough explanation please see our video presentation at https://drive.google.com/file/d/1E3DwpIBGkCv807663-OOLsw7Z6pLjQuF/view?usp=sharing
