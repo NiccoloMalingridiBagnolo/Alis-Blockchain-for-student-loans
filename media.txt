@@ -1,4 +1,6 @@
-Presentation slides are found in the file in this repo:
+Presentation slides are located in this repo in the file: 
 ALIS-Presentation.pdf
-Video presentation found at:
+
+
+Video presentation found at this link:
 https://drive.google.com/file/d/1E3DwpIBGkCv807663-OOLsw7Z6pLjQuF/view?usp=sharing
